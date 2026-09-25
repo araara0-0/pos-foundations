@@ -4,7 +4,7 @@
 <section class="page-heading">
     <p class="eyebrow">Staff directory</p>
     <h1>User Accounts</h1>
-    <p>Temporary staff records stored in a PHP array.</p>
+    <p>Staff records retrieved from the LumenMart database.</p>
 </section>
 
 <div class="table-wrap">

@@ -4,7 +4,7 @@
 <section class="page-heading">
     <p class="eyebrow">Account directory</p>
     <h1>Customer Accounts</h1>
-    <p>Temporary customer records stored in a PHP array.</p>
+    <p>Customer records retrieved from the LumenMart database.</p>
 </section>
 
 <div class="table-wrap">

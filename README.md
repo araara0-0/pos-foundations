@@ -8,7 +8,7 @@ LumenMart POS Foundations is a four-page CodeIgniter 4 application created for t
 - Project information at `/about`
 - Customer account listing at `/customers`
 - User and staff account listing at `/users`
-- Five customer records and five user records stored in PHP arrays
+- Customer and user records retrieved from a MySQL database
 - Responsive navigation and table styling
 
 ## Requirements
@@ -16,6 +16,8 @@ LumenMart POS Foundations is a four-page CodeIgniter 4 application created for t
 - PHP 8.2 or newer
 - Composer 2
 - PHP extensions `intl`, `mbstring`, and `zip`
+- MySQL or MariaDB
+- XAMPP or another compatible local server environment
 
 ## Local setup
 
@@ -35,23 +37,32 @@ LumenMart POS Foundations is a four-page CodeIgniter 4 application created for t
    app.baseURL = 'http://localhost:8080/'
    ```
 
-6. Start the CodeIgniter development server:
+6. Start MySQL.
+- Create a database named lumenmart_pos.
+- Import database/lumenmart_pos.sql.
+- Configure the database.default settings in .env.
+
+
+
+7. Start the CodeIgniter development server:
 
    ```bash
    php spark serve
    ```
 
-7. Open `http://localhost:8080` in a browser.
+8. Open `http://localhost:8080` in a browser.
 
 ## Project structure
 
 - `app/Config/Routes.php` defines the four page routes.
 - `app/Controllers/Pages.php` serves the landing and about pages.
-- `app/Controllers/Customers.php` prepares temporary customer data.
-- `app/Controllers/Users.php` prepares temporary staff data.
+- `app/Controllers/Customers.php`retrieves customer records through CustomerModel.
+- `app/Controllers/Users.php` retrieves staff records through UserModel.
+- `app/Models/CustomerModel.php ` connects to the customers table.
+- `app/Models/UserModel.php ` connects to the users table.
 - `app/Views` contains the page and shared layout views.
 - `public/css/style.css` contains the site presentation styles.
 
 ## Current data source
 
-This version intentionally uses static PHP arrays. No database is required for the current activity.
+CodeIgniter Models and a MySQL database for persistent customer and staff records.
