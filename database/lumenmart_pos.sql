@@ -58,6 +58,7 @@ CREATE TABLE `users` (
   `full_name` varchar(100) NOT NULL,
   `role` varchar(50) NOT NULL,
   `avatar` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -65,12 +66,12 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `full_name`, `role`, `created_at`) VALUES
-(1, 'avery.admin', 'Avery Lim', 'Administrator', '2026-09-26 04:17:42'),
-(2, 'bianca.cashier', 'Bianca Torres', 'Cashier', '2026-09-26 04:17:42'),
-(3, 'carlo.stock', 'Carlo Navarro', 'Inventory Clerk', '2026-09-26 04:17:42'),
-(4, 'dana.supervisor', 'Dana Flores', 'Supervisor', '2026-09-26 04:17:42'),
-(5, 'ethan.manager', 'Ethan Ramos', 'Store Manager', '2026-09-26 04:17:42');
+INSERT INTO `users` (`id`, `username`, `full_name`, `role`, `password`, `created_at`) VALUES
+(1, 'avery.admin', 'Avery Lim', 'Administrator', '$2y$10$0HbI.aYU1dasTpZAaB4g0u2RSInGzZ2cJ0g24DV5ZBzRb1mQxtKS2', '2026-09-26 04:17:42'),
+(2, 'bianca.cashier', 'Bianca Torres', 'Cashier', '$2y$10$7o4kIA118Ov5MfI43xT/yOK2l8UtinuhixcMcwuaLPyK6LX/VdI32', '2026-09-26 04:17:42'),
+(3, 'carlo.stock', 'Carlo Navarro', 'Inventory Clerk', '$2y$10$N7Bpw9hkQHiuo2uY.MO9yeH4hj4qzZ1eknKcZOH/S0YXVCoQJTTwK', '2026-09-26 04:17:42'),
+(4, 'dana.supervisor', 'Dana Flores', 'Supervisor', '$2y$10$xerBD2U.LKygfQ9bXqMXKea13AmDm9lvPbx8fLyuSfp1h2Mweej4W', '2026-09-26 04:17:42'),
+(5, 'ethan.manager', 'Ethan Ramos', 'Store Manager', '$2y$10$GKU.p57pnOAflwVpapKw4eXaxWwhRHrnGNeSEXI3POe/Co39jmexm', '2026-09-26 04:17:42');
 
 --
 -- Indexes for dumped tables

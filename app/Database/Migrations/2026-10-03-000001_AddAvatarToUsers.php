@@ -8,14 +8,16 @@ class AddAvatarToUsers extends Migration
 {
     public function up()
     {
-        $this->forge->addColumn('users', [
+        if (! $this->db->fieldExists('avatar', 'users')) {
+            $this->forge->addColumn('users', [
             'avatar' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
                 'null' => true,
                 'after' => 'role',
             ],
-        ]);
+            ]);
+        }
     }
 
     public function down()

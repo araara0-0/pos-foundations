@@ -26,11 +26,13 @@ class Users extends BaseController
     {
         $model = new UserModel();
         $data = $this->userData();
-        if (! $this->validateUser($data)) {
+        $password = (string) $this->request->getPost('password');
+        if (! $this->validateUser($data) || ! $this->validatePassword($password, true)) {
             return view('users/form', ['user' => $data, 'isEdit' => false]);
         }
 
         $data['created_at'] = date('Y-m-d H:i:s');
+        $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         $model->insert($data);
         return redirect()->to('/users')->with('success', 'User account created.');
     }
@@ -54,7 +56,9 @@ class Users extends BaseController
         }
 
         $data = $this->userData();
-        if (! $this->validateUser($data, $id)) {
+        $password = (string) $this->request->getPost('password');
+        $userValid = $this->validateUser($data, $id);
+        if (! $this->validatePassword($password, false) || ! $userValid) {
             $data['id'] = $id;
             $data['avatar'] = $user['avatar'] ?? null;
             return view('users/form', ['user' => $data, 'isEdit' => true]);
@@ -68,6 +72,10 @@ class Users extends BaseController
         }
         if ($avatar !== null) {
             $data['avatar'] = $avatar;
+        }
+
+        if ($password !== '') {
+            $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
         $model->update($id, $data);
@@ -98,6 +106,20 @@ class Users extends BaseController
         $existing = $model->where('username', $data['username'])->first();
         if ($existing !== null && (int) $existing['id'] !== $id) {
             $this->validator->setError('username', 'That username is already in use.');
+            return false;
+        }
+
+        return true;
+    }
+
+    private function validatePassword(string $password, bool $required): bool
+    {
+        if ($password === '' && ! $required) {
+            return true;
+        }
+
+        if (strlen($password) < 8 || strlen($password) > 72) {
+            service('validation')->setError('password', 'Password must be between 8 and 72 characters.');
             return false;
         }
 

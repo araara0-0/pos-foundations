@@ -58,6 +58,19 @@ nav a:focus-visible {
     color: #ffffff;
 }
 
+.nav-form { margin: 0; }
+.nav-form button {
+    width: auto;
+    padding: 0;
+    border: 0;
+    color: #dbe7ff;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+.nav-form button:hover, .nav-form button:focus-visible { color: #ffffff; }
+
 .container {
     width: min(1080px, calc(100% - 2rem));
     margin: 0 auto;

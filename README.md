@@ -1,6 +1,6 @@
 # LumenMart POS Foundations
 
-LumenMart POS Foundations is a four-page CodeIgniter 4 application created for the IT0049 technical formative assessment. It demonstrates explicit routing, controllers, views, navigation, and static PHP arrays before database integration.
+LumenMart POS Foundations is a CodeIgniter 4 application for managing customer and staff accounts.
 
 ## Features
 
@@ -10,12 +10,13 @@ LumenMart POS Foundations is a four-page CodeIgniter 4 application created for t
 - User and staff account listing at `/users`
 - Customer and user records retrieved from a MySQL database
 - Responsive navigation and table styling
+- Login required for customer and user account management
 
 ## Requirements
 
 - PHP 8.2 or newer
 - Composer 2
-- PHP extensions `intl`, `mbstring`, and `zip`
+- PHP extensions `intl`, `mbstring`, `zip`, and `gd`
 - MySQL or MariaDB
 - XAMPP or another compatible local server environment
 
@@ -37,29 +38,39 @@ LumenMart POS Foundations is a four-page CodeIgniter 4 application created for t
    app.baseURL = 'http://localhost:8080/'
    ```
 
-6. Start MySQL.
-- Create a database named lumenmart_pos.
-- Import database/lumenmart_pos.sql.
-- Configure the database.default settings in .env.
+6. Start MySQL, create the `lumenmart_pos` database, import `database/lumenmart_pos.sql`, and configure the `database.default` settings in `.env`.
+7. Run the migrations to add account fields and hash a random password for every existing user:
 
+   ```bash
+   php spark migrate
+   ```
 
+8. Generate a usable password for an existing account:
 
-7. Start the CodeIgniter development server:
+   ```bash
+   php spark users:reset-password avery.admin
+   ```
+
+   The command displays the new password once. Save it securely. New accounts require a password, and existing accounts can change theirs on the edit page.
+
+9. Start the CodeIgniter development server:
 
    ```bash
    php spark serve
    ```
 
-8. Open `http://localhost:8080` in a browser.
+10. Open `http://localhost:8080/login` in a browser.
 
 ## Project structure
 
-- `app/Config/Routes.php` defines the four page routes.
+- `app/Config/Routes.php` defines public and protected routes.
+- `app/Filters/AuthFilter.php` protects customer and user routes.
+- `app/Controllers/Auth.php` handles login and logout.
 - `app/Controllers/Pages.php` serves the landing and about pages.
-- `app/Controllers/Customers.php`retrieves customer records through CustomerModel.
+- `app/Controllers/Customers.php` manages customer records through CustomerModel.
 - `app/Controllers/Users.php` retrieves staff records through UserModel.
-- `app/Models/CustomerModel.php ` connects to the customers table.
-- `app/Models/UserModel.php ` connects to the users table.
+- `app/Models/CustomerModel.php` connects to the customers table.
+- `app/Models/UserModel.php` connects to the users table.
 - `app/Views` contains the page and shared layout views.
 - `public/css/style.css` contains the site presentation styles.
 

@@ -17,6 +17,10 @@ $heading = $isEdit ? 'Edit User' : 'New User';
     <label>Username <span>*</span><input type="text" name="username" value="<?= esc($user['username'] ?? '') ?>" required maxlength="50"></label>
     <label>Full name <span>*</span><input type="text" name="full_name" value="<?= esc($user['full_name'] ?? '') ?>" required maxlength="100"></label>
     <label>Role <input type="text" name="role" value="<?= esc($user['role'] ?? 'Staff') ?>" maxlength="50"></label>
+    <label>Password <?= $isEdit ? '' : '<span>*</span>' ?>
+        <input type="password" name="password" <?= $isEdit ? '' : 'required' ?> minlength="8" maxlength="72" autocomplete="new-password">
+        <small><?= $isEdit ? 'Leave blank to keep the current password.' : 'Use 8 to 72 characters.' ?></small>
+    </label>
     <?php if ($isEdit): ?>
         <label>Profile picture
             <img class="avatar" src="/uploads/<?= esc(($user['avatar'] ?? null) ?: 'placeholder-avatar.svg') ?>" alt="Current avatar">

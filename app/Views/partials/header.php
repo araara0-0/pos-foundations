@@ -13,8 +13,13 @@
         <nav aria-label="Main navigation">
             <a href="/">Home</a>
             <a href="/about">About</a>
-            <a href="/customers">Customers</a>
-            <a href="/users">Users</a>
+            <?php if (session()->get('user_id') !== null): ?>
+                <a href="/customers">Customers</a>
+                <a href="/users">Users</a>
+                <form class="nav-form" method="post" action="/logout"><?= csrf_field() ?><button type="submit">Log Out</button></form>
+            <?php else: ?>
+                <a href="/login">Log In</a>
+            <?php endif; ?>
         </nav>
     </header>
     <main class="container">
