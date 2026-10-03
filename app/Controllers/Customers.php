@@ -14,4 +14,72 @@ class Customers extends BaseController
         $customers = $customerModel->findAll();
         return view('customers/index', ['customers' => $customers]);
     }
+
+    public function new()
+    {
+        return view('customers/form', [
+            'customer' => ['full_name' => '', 'email' => '', 'phone' => ''],
+            'isEdit' => false,
+        ]);
+    }
+
+    public function create()
+    {
+        $model = new CustomerModel();
+        $data = $this->customerData();
+
+        if (! $this->validateData($data, [
+            'full_name' => 'required|max_length[100]',
+            'email' => 'required|valid_email|max_length[100]',
+            'phone' => 'permit_empty|max_length[20]',
+        ])) {
+            return view('customers/form', ['customer' => $data, 'isEdit' => false]);
+        }
+
+        $data['created_at'] = date('Y-m-d H:i:s');
+        $model->insert($data);
+
+        return redirect()->to('/customers')->with('success', 'Customer account created.');
+    }
+
+    public function edit(int $id)
+    {
+        $customer = (new CustomerModel())->find($id);
+        if ($customer === null) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        return view('customers/form', ['customer' => $customer, 'isEdit' => true]);
+    }
+
+    public function update(int $id)
+    {
+        $model = new CustomerModel();
+        $customer = $model->find($id);
+        if ($customer === null) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $data = $this->customerData();
+        if (! $this->validateData($data, [
+            'full_name' => 'required|max_length[100]',
+            'email' => 'required|valid_email|max_length[100]',
+            'phone' => 'permit_empty|max_length[20]',
+        ])) {
+            $data['id'] = $id;
+            return view('customers/form', ['customer' => $data, 'isEdit' => true]);
+        }
+
+        $model->update($id, $data);
+        return redirect()->to('/customers')->with('success', 'Customer account updated.');
+    }
+
+    private function customerData(): array
+    {
+        return [
+            'full_name' => trim((string) $this->request->getPost('full_name')),
+            'email' => trim((string) $this->request->getPost('email')),
+            'phone' => trim((string) $this->request->getPost('phone')),
+        ];
+    }
 }

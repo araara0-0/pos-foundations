@@ -18,3 +18,6 @@
         </nav>
     </header>
     <main class="container">
+<?php if ($message = session()->getFlashdata('success')): ?>
+    <div class="alert success"><?= esc($message) ?></div>
+<?php endif; ?>
