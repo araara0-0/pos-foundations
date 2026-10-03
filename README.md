@@ -39,19 +39,21 @@ LumenMart POS Foundations is a CodeIgniter 4 application for managing customer a
    ```
 
 6. Start MySQL, create the `lumenmart_pos` database, import `database/lumenmart_pos.sql`, and configure the `database.default` settings in `.env`.
-7. Run the migrations to add account fields and hash a random password for every existing user:
+7. Run the migrations to add missing account fields and fill any missing password hashes:
 
    ```bash
    php spark migrate
    ```
 
-8. Generate a usable password for an existing account:
+8. The sample SQL accounts use `admin123` for `avery.admin` and `lumen123` for the other four users. Change these passwords before using the application beyond a local demo. To generate a new password for an existing account:
 
    ```bash
    php spark users:reset-password avery.admin
    ```
 
    The command displays the new password once. Save it securely. New accounts require a password, and existing accounts can change theirs on the edit page.
+
+   To set a specific password from standard input, run `php spark users:set-password <username|all>` and enter the password when prompted.
 
 9. Start the CodeIgniter development server:
 
