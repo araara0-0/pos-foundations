@@ -30,5 +30,6 @@ final class AccountAccessTest extends CIUnitTestCase
         $response = $this->withSession(['user_id' => 1, 'username' => 'avery.admin'])->get('/users/new');
         $response->assertOK();
         $response->assertSee('New User');
+        $response->assertSeeElement('input[name=avatar]');
     }
 }

@@ -31,6 +31,14 @@ class Users extends BaseController
             return view('users/form', ['user' => $data, 'isEdit' => false]);
         }
 
+        $avatar = $this->prepareAvatar(null);
+        if ($avatar === false) {
+            return view('users/form', ['user' => $data, 'isEdit' => false]);
+        }
+        if ($avatar !== null) {
+            $data['avatar'] = $avatar;
+        }
+
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         $model->insert($data);
@@ -155,7 +163,11 @@ class Users extends BaseController
         $filename = bin2hex(random_bytes(16)) . ($mime === 'image/png' ? '.png' : '.jpg');
         $destination = $directory . DIRECTORY_SEPARATOR . $filename;
         try {
-            service('image')->withFile($upload->getTempName())->fit(256, 256, 'center')->save($destination, 85);
+            if (extension_loaded('gd')) {
+                service('image')->withFile($upload->getTempName())->fit(256, 256, 'center')->save($destination, 85);
+            } else {
+                $upload->move($directory, $filename);
+            }
         } catch (\Throwable) {
             $this->validator->setError('avatar', 'The profile picture could not be prepared.');
             return false;

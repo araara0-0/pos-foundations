@@ -21,13 +21,13 @@ $heading = $isEdit ? 'Edit User' : 'New User';
         <input type="password" name="password" <?= $isEdit ? '' : 'required' ?> minlength="8" maxlength="72" autocomplete="new-password">
         <small><?= $isEdit ? 'Leave blank to keep the current password.' : 'Use 8 to 72 characters.' ?></small>
     </label>
-    <?php if ($isEdit): ?>
-        <label>Profile picture
+    <label>Profile picture
+        <?php if ($isEdit): ?>
             <img class="avatar" src="/uploads/<?= esc(($user['avatar'] ?? null) ?: 'placeholder-avatar.svg') ?>" alt="Current avatar">
-            <input type="file" name="avatar" accept="image/jpeg,image/png">
-            <small>JPG or PNG, up to 2MB. It will be prepared as a 256×256 thumbnail.</small>
-        </label>
-    <?php endif; ?>
+        <?php endif; ?>
+        <input type="file" name="avatar" accept="image/jpeg,image/png">
+        <small>JPG or PNG, up to 2MB.</small>
+    </label>
     <div class="actions"><button class="button primary" type="submit">Save User</button><a class="button secondary" href="/users">Cancel</a></div>
 </form>
 
