@@ -78,4 +78,15 @@ LumenMart POS Foundations is a CodeIgniter 4 application for managing customer a
 
 ## Current data source
 
-CodeIgniter Models and a MySQL database for persistent customer and staff records.
+CodeIgniter Models and a MySQL database for persistent product, customer, staff, and sales records.
+
+## Database design
+
+The `database/lumenmart_pos.sql` import and CodeIgniter migrations provide four related tables:
+
+- `products` stores the current price, available stock, and prepared image filename.
+- `customers` stores optional customer details for a sale.
+- `users` stores staff accounts. The existing `role` field is retained by the current interface in addition to the required hashed password and avatar fields.
+- `sales` references one product and one selling staff member. Its customer reference is optional.
+
+Deleting a customer keeps historical sales by setting `sales.customer_id` to `NULL`. Products and staff members referenced by sales are restricted from deletion so that transaction history remains complete.
