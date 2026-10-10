@@ -1,27 +1,27 @@
 <?= view('partials/header', ['title' => 'Home']) ?>
 
 <section class="hero">
-    <p class="eyebrow">LumenMart Point of Sale</p>
-    <h1>Store account management made simple</h1>
-    <p>LumenMart uses this application to organize customer and staff account information in one clear interface.</p>
+    <p class="eyebrow">LumenMart POS</p>
+    <h1>Manage your store in one place</h1>
+    <p>Track products and stock, manage customers and staff, and record sales.</p>
     <div class="actions">
-        <a class="button primary" href="/customers">View customers</a>
-        <a class="button secondary" href="/users">View users</a>
+        <a class="button primary" href="/sales/new">Record a sale</a>
+        <a class="button secondary" href="/products">View products</a>
     </div>
 </section>
 
 <section class="feature-grid" aria-label="Application features">
     <article class="card">
-        <h2>Customer Accounts</h2>
-        <p>Review customer names, email addresses, and phone numbers.</p>
+        <h2>Products and Stock</h2>
+        <p>Manage product prices, images, and available quantities.</p>
     </article>
     <article class="card">
-        <h2>User Accounts</h2>
-        <p>Review staff usernames, full names, and assigned roles.</p>
+        <h2>Customers and Staff</h2>
+        <p>Keep contact details and staff accounts up to date.</p>
     </article>
     <article class="card">
-        <h2>CodeIgniter MVC</h2>
-        <p>Routes, controllers, and views keep LumenMart's application organized.</p>
+        <h2>Sales History</h2>
+        <p>Review past transactions and see who sold each product.</p>
     </article>
 </section>
 

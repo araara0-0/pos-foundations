@@ -8,9 +8,9 @@
 
 <section class="content-card">
     <h2>About this application</h2>
-    <p>The LumenMart POS foundation organizes customer and staff accounts while demonstrating the Model-View-Controller structure of CodeIgniter 4.</p>
+    <p>LumenMart POS manages products, customers, staff accounts, and sales in a CodeIgniter 4 application.</p>
     <p>A route matches each URL to a controller method. The controller prepares the page data and passes it to a view that renders the HTML.</p>
-    <p>Customer and user records currently come from LumenMart database which stores each record.</p>
+    <p>Product, customer, staff, and sales records are stored in the LumenMart database. Recording a sale saves the transaction and reduces the product's stock.</p>
 </section>
 
 <?= view('partials/footer') ?>

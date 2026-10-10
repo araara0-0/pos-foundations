@@ -1,25 +1,25 @@
 # LumenMart POS
 
-LumenMart POS is a CodeIgniter 4 application for managing customer and staff accounts.
+LumenMart POS is a CodeIgniter 4 application for managing a small store's products, customers, staff, and sales.
 
 ## Features
 
 - Landing page at `/`
 - Project information at `/about`
-- Full customer management at `/customers`
-- Full staff account management at `/users`, including prepared avatars and hashed passwords
-- Product listing and management at `/products`
-- Transactional sale recording with stock checks at `/sales/new`
+- Product management at `/products`, including stock, prices, and uploaded images
+- Customer management at `/customers`
+- Staff management at `/users`, including avatars and hashed passwords
+- Sale recording at `/sales/new`, with stock checks and an atomic stock reduction
 - Sales history with product, customer, staff, quantity, total, and date at `/sales`
-- Customer and user records retrieved from a MySQL database
+- Login required for all management pages
+- Records stored in MySQL or MariaDB
 - Responsive navigation and table styling
-- Login required for customer and user account management
 
 ## Requirements
 
 - PHP 8.2 or newer
 - Composer 2
-- PHP extensions `intl`, `mbstring`, `zip`, and `gd`
+- PHP extensions `intl`, `mbstring`, `zip`, and `gd`; enable `sqlite3` to run the automated database tests
 - MySQL or MariaDB
 - XAMPP or another compatible local server environment
 
@@ -42,11 +42,13 @@ LumenMart POS is a CodeIgniter 4 application for managing customer and staff acc
    ```
 
 6. Start MySQL, create the `lumenmart_pos` database, import `database/lumenmart_pos.sql`, and configure the `database.default` settings in `.env`.
-7. Run the migrations to add missing account fields and fill any missing password hashes:
+7. Run the migrations to apply any missing schema changes and fill any missing password hashes:
 
    ```bash
    php spark migrate
    ```
+
+   The supplied SQL import already owns the base tables. For safety, the compatibility migrations preserve those tables and columns on rollback; `migrate:rollback` and `migrate:refresh` do not remove or rebuild this imported schema. Use a database backup when you need to restore it.
 
 8. The sample SQL accounts use `admin123` for `avery.admin` and `lumen123` for the other four users. Change these passwords before using the application beyond a local demo. To generate a new password for an existing account:
 
@@ -66,6 +68,8 @@ LumenMart POS is a CodeIgniter 4 application for managing customer and staff acc
 
 10. Open `http://localhost:8080/login` in a browser.
 
+On XAMPP for Windows, use `C:\xampp\php\php.exe` in place of `php` if PHP is not on your PATH. Enable `gd` in `C:\xampp\php\php.ini` so uploaded images are resized for display.
+
 ### Optional sample products
 
 Populate the product catalog with editable convenience-store demo inventory:
@@ -76,24 +80,31 @@ php spark db:seed ProductSeeder
 
 The seeder skips existing product names, so rerunning it will not duplicate or overwrite those products. Product prices are sample retail values and should be reviewed before real use.
 
+## Tests
+
+The test database is an in-memory SQLite database; running PHPUnit does not change the local MySQL data. From the project root, run:
+
+```powershell
+C:\xampp\php\php.exe -d extension=sqlite3 -d extension=gd vendor\bin\phpunit
+```
+
+This command enables the SQLite3 and GD extensions for that run if they are installed but disabled in XAMPP's CLI configuration. See [tests/README.md](tests/README.md) for test coverage and other environments.
+
 ## Project structure
 
 - `app/Config/Routes.php` defines public and protected routes.
-- `app/Filters/AuthFilter.php` protects customer and user routes.
+- `app/Filters/AuthFilter.php` protects product, customer, staff, and sales routes.
 - `app/Controllers/Auth.php` handles login and logout.
 - `app/Controllers/Pages.php` serves the landing and about pages.
 - `app/Controllers/Customers.php` manages customer records through CustomerModel.
 - `app/Controllers/Products.php` manages product records and prepared product images.
-- `app/Controllers/Sales.php` validates and records sales through an atomic stock update.
-- `app/Controllers/Users.php` retrieves staff records through UserModel.
-- `app/Models/CustomerModel.php` connects to the customers table.
-- `app/Models/UserModel.php` connects to the users table.
+- `app/Controllers/Sales.php` handles sale entry and sales history.
+- `app/Services/SaleService.php` records sales and updates stock in one transaction.
+- `app/Controllers/Users.php` manages staff accounts and avatars.
+- `app/Models` contains the product, customer, staff, and sale models.
+- `app/Database/Migrations` and `app/Database/Seeds` contain schema changes and sample products.
 - `app/Views` contains the page and shared layout views.
 - `public/css/style.css` contains the site presentation styles.
-
-## Current data source
-
-CodeIgniter Models and a MySQL database for persistent product, customer, staff, and sales records.
 
 ## Database design
 
@@ -104,4 +115,4 @@ The `database/lumenmart_pos.sql` import and CodeIgniter migrations provide four 
 - `users` stores staff accounts. The existing `role` field is retained by the current interface in addition to the required hashed password and avatar fields.
 - `sales` references one product and one selling staff member. Its customer reference is optional.
 
-Deleting a customer keeps historical sales by setting `sales.customer_id` to `NULL`. Products and staff members referenced by sales are restricted from deletion so that transaction history remains complete.
+Products, customers, and staff members referenced by sales cannot be deleted through the application, so names remain available in sales history. Other records can be deleted from their management pages.

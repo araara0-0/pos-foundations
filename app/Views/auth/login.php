@@ -3,7 +3,7 @@
 <section class="page-heading">
     <p class="eyebrow">LumenMart POS</p>
     <h1>Log In</h1>
-    <p>Sign in to manage customer and user accounts.</p>
+    <p>Sign in to manage products, customers, staff, and sales.</p>
 </section>
 
 <?php if ($message = session()->getFlashdata('error')): ?>
