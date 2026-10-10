@@ -16,6 +16,10 @@ class SaleService
     /** @return array{success: bool, message: string} */
     public function record(int $productId, ?int $customerId, int $staffId, int $quantity): array
     {
+        if ($quantity < 1) {
+            return $this->failure('Quantity must be at least one.');
+        }
+
         $this->db->transBegin();
 
         try {
@@ -50,12 +54,19 @@ class SaleService
                 return $this->failure('Not enough stock is available for this sale.');
             }
 
+            // The stock update locks the row until commit; read its current price under that lock.
+            $currentProduct = $this->db->table('products')->select('price')->where('id', $productId)->get()->getRowArray();
+            if ($currentProduct === null) {
+                $this->db->transRollback();
+                return $this->failure('The selected product no longer exists.');
+            }
+
             $inserted = $this->db->table('sales')->insert([
                 'product_id' => $productId,
                 'customer_id' => $customerId,
                 'sold_by' => $staffId,
                 'quantity' => $quantity,
-                'total_price' => $this->calculateTotal((string) $product['price'], $quantity),
+                'total_price' => $this->calculateTotal((string) $currentProduct['price'], $quantity),
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
 

@@ -57,6 +57,20 @@ final class SaleServiceTest extends CIUnitTestCase
         $this->assertSame(0, $this->connection->table('sales')->countAllResults());
     }
 
+    public function testRejectsNonPositiveQuantityWithoutChangingStock(): void
+    {
+        $staffId = $this->insertStaff();
+        $productId = $this->insertProduct(5, '15.00');
+
+        $result = (new SaleService($this->connection))->record($productId, null, $staffId, -2);
+
+        $this->assertFalse($result['success']);
+        $this->assertStringContainsString('Quantity must be at least one', $result['message']);
+        $product = $this->connection->table('products')->where('id', $productId)->get()->getRowArray();
+        $this->assertSame(5, (int) $product['stock_quantity']);
+        $this->assertSame(0, $this->connection->table('sales')->countAllResults());
+    }
+
     public function testInvalidCustomerDoesNotChangeStock(): void
     {
         $staffId = $this->insertStaff();

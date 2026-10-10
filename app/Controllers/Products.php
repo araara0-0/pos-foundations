@@ -29,7 +29,7 @@ class Products extends BaseController
             return view('products/form', ['product' => $data, 'isEdit' => false]);
         }
 
-        $image = $this->prepareImage(null);
+        $image = $this->prepareImage();
         if ($image === false) {
             return view('products/form', ['product' => $data, 'isEdit' => false]);
         }
@@ -38,7 +38,16 @@ class Products extends BaseController
         }
 
         $data['created_at'] = date('Y-m-d H:i:s');
-        (new ProductModel())->insert($data);
+        try {
+            $saved = (new ProductModel())->insert($data);
+        } catch (\Throwable $exception) {
+            log_message('error', 'Product creation failed: {message}', ['message' => $exception->getMessage()]);
+            $saved = false;
+        }
+        if ($saved === false) {
+            $this->deleteImage($image);
+            return redirect()->to('/products/new')->with('error', 'The product could not be saved. Please try again.');
+        }
 
         return redirect()->to('/products')->with('success', 'Product created.');
     }
@@ -50,6 +59,7 @@ class Products extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
+        $product['original_stock_quantity'] = $product['stock_quantity'];
         return view('products/form', ['product' => $product, 'isEdit' => true]);
     }
 
@@ -62,23 +72,55 @@ class Products extends BaseController
         }
 
         $data = $this->productData();
+        $originalStock = filter_var($this->request->getPost('original_stock_quantity'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
+        if ($originalStock === false) {
+            return redirect()->to('/products/' . $id . '/edit')->with('error', 'Please reload this product before saving.');
+        }
         if (! $this->validateProduct($data)) {
             $data['id'] = $id;
             $data['image'] = $product['image'] ?? null;
+            $data['original_stock_quantity'] = $originalStock;
             return view('products/form', ['product' => $data, 'isEdit' => true]);
         }
 
-        $image = $this->prepareImage($product['image'] ?? null);
+        $image = $this->prepareImage();
         if ($image === false) {
             $data['id'] = $id;
             $data['image'] = $product['image'] ?? null;
+            $data['original_stock_quantity'] = $originalStock;
             return view('products/form', ['product' => $data, 'isEdit' => true]);
         }
         if ($image !== null) {
             $data['image'] = $image;
         }
 
-        $model->update($id, $data);
+        try {
+            $db = db_connect();
+            $saved = $db->table('products')
+                ->where('id', $id)
+                ->where('stock_quantity', $originalStock)
+                ->update($data);
+            $affected = $db->affectedRows();
+        } catch (\Throwable $exception) {
+            log_message('error', 'Product update failed: {message}', ['message' => $exception->getMessage()]);
+            $saved = false;
+        }
+
+        if (! $saved) {
+            $this->deleteImage($image);
+            return redirect()->to('/products/' . $id . '/edit')->with('error', 'The product could not be saved. Please try again.');
+        }
+        if ($affected === 0) {
+            $current = $model->find($id);
+            if ($current === null || (int) $current['stock_quantity'] !== $originalStock) {
+                $this->deleteImage($image);
+                return redirect()->to('/products/' . $id . '/edit')->with('error', 'Stock changed since you opened this product. Review the latest quantity and save again.');
+            }
+        }
+
+        if ($image !== null) {
+            $this->deleteImage($product['image'] ?? null);
+        }
         return redirect()->to('/products')->with('success', 'Product updated.');
     }
 
@@ -95,7 +137,15 @@ class Products extends BaseController
             return redirect()->to('/products')->with('error', 'This product cannot be deleted because it appears in sales history.');
         }
 
-        $model->delete($id);
+        try {
+            $deleted = $model->delete($id);
+        } catch (\Throwable $exception) {
+            log_message('error', 'Product deletion failed: {message}', ['message' => $exception->getMessage()]);
+            $deleted = false;
+        }
+        if (! $deleted) {
+            return redirect()->to('/products')->with('error', 'The product could not be deleted. Please try again.');
+        }
         $this->deleteImage($product['image'] ?? null);
 
         return redirect()->to('/products')->with('success', 'Product deleted.');
@@ -120,7 +170,7 @@ class Products extends BaseController
     }
 
     /** @return string|null|false The filename, null when no image was supplied, or false on failure. */
-    private function prepareImage(?string $oldImage): string|null|false
+    private function prepareImage(): string|null|false
     {
         /** @var UploadedFile|null $upload */
         $upload = $this->request->getFile('image');
@@ -154,11 +204,13 @@ class Products extends BaseController
                 $upload->move($directory, $filename);
             }
         } catch (\Throwable) {
+            if (is_file($destination)) {
+                @unlink($destination);
+            }
             $this->validator->setError('image', 'The product image could not be prepared.');
             return false;
         }
 
-        $this->deleteImage($oldImage);
         return $filename;
     }
 

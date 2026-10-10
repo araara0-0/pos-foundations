@@ -31,7 +31,7 @@ class Users extends BaseController
             return view('users/form', ['user' => $data, 'isEdit' => false]);
         }
 
-        $avatar = $this->prepareAvatar(null);
+        $avatar = $this->prepareAvatar();
         if ($avatar === false) {
             return view('users/form', ['user' => $data, 'isEdit' => false]);
         }
@@ -41,7 +41,16 @@ class Users extends BaseController
 
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['password'] = password_hash($password, PASSWORD_DEFAULT);
-        $model->insert($data);
+        try {
+            $saved = $model->insert($data);
+        } catch (\Throwable $exception) {
+            log_message('error', 'Staff account creation failed: {message}', ['message' => $exception->getMessage()]);
+            $saved = false;
+        }
+        if ($saved === false) {
+            $this->deleteAvatar($avatar);
+            return redirect()->to('/users/new')->with('error', 'The staff account could not be saved. Please try again.');
+        }
         return redirect()->to('/users')->with('success', 'User account created.');
     }
 
@@ -72,7 +81,7 @@ class Users extends BaseController
             return view('users/form', ['user' => $data, 'isEdit' => true]);
         }
 
-        $avatar = $this->prepareAvatar($user['avatar'] ?? null);
+        $avatar = $this->prepareAvatar();
         if ($avatar === false) {
             $data['id'] = $id;
             $data['avatar'] = $user['avatar'] ?? null;
@@ -86,7 +95,19 @@ class Users extends BaseController
             $data['password'] = password_hash($password, PASSWORD_DEFAULT);
         }
 
-        $model->update($id, $data);
+        try {
+            $saved = $model->update($id, $data);
+        } catch (\Throwable $exception) {
+            log_message('error', 'Staff account update failed: {message}', ['message' => $exception->getMessage()]);
+            $saved = false;
+        }
+        if (! $saved) {
+            $this->deleteAvatar($avatar);
+            return redirect()->to('/users/' . $id . '/edit')->with('error', 'The staff account could not be saved. Please try again.');
+        }
+        if ($avatar !== null) {
+            $this->deleteAvatar($user['avatar'] ?? null);
+        }
         return redirect()->to('/users')->with('success', 'User account updated.');
     }
 
@@ -107,7 +128,15 @@ class Users extends BaseController
             return redirect()->to('/users')->with('error', 'This staff account cannot be deleted because it appears in sales history.');
         }
 
-        $model->delete($id);
+        try {
+            $deleted = $model->delete($id);
+        } catch (\Throwable $exception) {
+            log_message('error', 'Staff account deletion failed: {message}', ['message' => $exception->getMessage()]);
+            $deleted = false;
+        }
+        if (! $deleted) {
+            return redirect()->to('/users')->with('error', 'The staff account could not be deleted. Please try again.');
+        }
         $this->deleteAvatar($user['avatar'] ?? null);
 
         return redirect()->to('/users')->with('success', 'User account deleted.');
@@ -158,7 +187,7 @@ class Users extends BaseController
     }
 
     /** @return string|null|false The stored filename, null when no upload was supplied, or false on validation failure. */
-    private function prepareAvatar(?string $oldAvatar): string|null|false
+    private function prepareAvatar(): string|null|false
     {
         /** @var UploadedFile|null $upload */
         $upload = $this->request->getFile('avatar');
@@ -192,13 +221,13 @@ class Users extends BaseController
                 $upload->move($directory, $filename);
             }
         } catch (\Throwable) {
+            if (is_file($destination)) {
+                @unlink($destination);
+            }
             $this->validator->setError('avatar', 'The profile picture could not be prepared.');
             return false;
         }
 
-        if ($oldAvatar && is_file($directory . DIRECTORY_SEPARATOR . basename($oldAvatar))) {
-            @unlink($directory . DIRECTORY_SEPARATOR . basename($oldAvatar));
-        }
         return $filename;
     }
 

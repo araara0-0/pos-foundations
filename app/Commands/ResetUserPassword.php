@@ -29,7 +29,18 @@ class ResetUserPassword extends BaseCommand
         }
 
         $password = rtrim(strtr(base64_encode(random_bytes(18)), '+/', '-_'), '=');
-        $model->update($user['id'], ['password' => password_hash($password, PASSWORD_DEFAULT)]);
+        try {
+            $saved = $model->update($user['id'], ['password' => password_hash($password, PASSWORD_DEFAULT)]);
+            $stored = $saved ? $model->find($user['id']) : null;
+            $saved = $saved && $stored !== null && password_verify($password, (string) ($stored['password'] ?? ''));
+        } catch (\Throwable $exception) {
+            log_message('error', 'Password reset failed: {message}', ['message' => $exception->getMessage()]);
+            $saved = false;
+        }
+        if (! $saved) {
+            CLI::error('The password could not be saved. No new password was issued.');
+            return;
+        }
         CLI::write('New password for ' . $username . ': ' . $password);
         CLI::write('Store it securely; it will not be shown again.');
     }

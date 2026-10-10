@@ -81,7 +81,20 @@ class Customers extends BaseController
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
         }
 
-        $model->delete($id);
+        $hasSales = db_connect()->table('sales')->where('customer_id', $id)->countAllResults() > 0;
+        if ($hasSales) {
+            return redirect()->to('/customers')->with('error', 'This customer cannot be deleted because they appear in sales history.');
+        }
+
+        try {
+            $deleted = $model->delete($id);
+        } catch (\Throwable $exception) {
+            log_message('error', 'Customer deletion failed: {message}', ['message' => $exception->getMessage()]);
+            $deleted = false;
+        }
+        if (! $deleted) {
+            return redirect()->to('/customers')->with('error', 'The customer could not be deleted. Please try again.');
+        }
         return redirect()->to('/customers')->with('success', 'Customer account deleted.');
     }
 
