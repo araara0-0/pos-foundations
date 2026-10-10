@@ -1,6 +1,6 @@
-# LumenMart POS Foundations
+# LumenMart POS
 
-LumenMart POS Foundations is a CodeIgniter 4 application for managing customer and staff accounts.
+LumenMart POS is a CodeIgniter 4 application for managing customer and staff accounts.
 
 ## Features
 
