@@ -177,7 +177,8 @@ label {
 
 label span { color: #b42318; }
 
-input {
+input,
+select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border);
@@ -203,6 +204,47 @@ small { color: var(--muted); font-weight: 400; }
     object-fit: cover;
     border-radius: 50%;
     vertical-align: middle;
+}
+
+.product-thumb {
+    width: 72px;
+    height: 54px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    border-radius: 0.45rem;
+    vertical-align: middle;
+}
+
+.product-preview {
+    width: min(100%, 320px);
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    border-radius: 0.6rem;
+}
+
+.table-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.table-actions form {
+    margin: 0;
+}
+
+.link-button {
+    padding: 0;
+    border: 0;
+    color: var(--primary);
+    background: transparent;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link-button.danger {
+    color: #b42318;
 }
 
 .card,

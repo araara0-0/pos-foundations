@@ -13,6 +13,11 @@ final class AccountAccessTest extends CIUnitTestCase
         $this->withSession([])->get('/customers/new')->assertRedirectTo('/login');
     }
 
+    public function testGuestIsRedirectedFromProductForm(): void
+    {
+        $this->withSession([])->get('/products/new')->assertRedirectTo('/login');
+    }
+
     public function testGuestIsRedirectedFromUserForm(): void
     {
         $this->withSession([])->get('/users/new')->assertRedirectTo('/login');
@@ -23,6 +28,14 @@ final class AccountAccessTest extends CIUnitTestCase
         $response = $this->withSession(['user_id' => 1, 'username' => 'avery.admin'])->get('/customers/new');
         $response->assertOK();
         $response->assertSee('New Customer');
+    }
+
+    public function testLoggedInUserCanOpenProductForm(): void
+    {
+        $response = $this->withSession(['user_id' => 1, 'username' => 'avery.admin'])->get('/products/new');
+        $response->assertOK();
+        $response->assertSee('New Product');
+        $response->assertSeeElement('input[name=image]');
     }
 
     public function testLoggedInUserCanOpenUserForm(): void
