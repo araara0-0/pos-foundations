@@ -35,4 +35,5 @@ $routes->group('users', ['filter' => 'auth'], static function ($routes) {
     $routes->post('', 'Users::create');
     $routes->get('(:num)/edit', 'Users::edit/$1');
     $routes->post('(:num)', 'Users::update/$1');
+    $routes->post('(:num)/delete', 'Users::delete/$1');
 });

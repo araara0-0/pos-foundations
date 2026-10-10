@@ -90,6 +90,29 @@ class Users extends BaseController
         return redirect()->to('/users')->with('success', 'User account updated.');
     }
 
+    public function delete(int $id)
+    {
+        $model = new UserModel();
+        $user = $model->find($id);
+        if ($user === null) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        if ((int) session()->get('user_id') === $id) {
+            return redirect()->to('/users')->with('error', 'You cannot delete the account you are currently using.');
+        }
+
+        $hasSales = db_connect()->table('sales')->where('sold_by', $id)->countAllResults() > 0;
+        if ($hasSales) {
+            return redirect()->to('/users')->with('error', 'This staff account cannot be deleted because it appears in sales history.');
+        }
+
+        $model->delete($id);
+        $this->deleteAvatar($user['avatar'] ?? null);
+
+        return redirect()->to('/users')->with('success', 'User account deleted.');
+    }
+
     private function userData(): array
     {
         return [
@@ -177,5 +200,17 @@ class Users extends BaseController
             @unlink($directory . DIRECTORY_SEPARATOR . basename($oldAvatar));
         }
         return $filename;
+    }
+
+    private function deleteAvatar(?string $filename): void
+    {
+        if (! $filename) {
+            return;
+        }
+
+        $path = FCPATH . 'uploads' . DIRECTORY_SEPARATOR . basename($filename);
+        if (is_file($path)) {
+            @unlink($path);
+        }
     }
 }
