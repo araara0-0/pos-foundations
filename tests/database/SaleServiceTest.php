@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\SaleModel;
 use App\Services\SaleService;
 use CodeIgniter\Database\BaseConnection;
 use CodeIgniter\Test\CIUnitTestCase;
@@ -69,6 +70,23 @@ final class SaleServiceTest extends CIUnitTestCase
         $this->assertSame(0, $this->connection->table('sales')->countAllResults());
     }
 
+    public function testSalesHistoryIncludesRelatedNames(): void
+    {
+        $staffId = $this->insertStaff();
+        $productId = $this->insertProduct(4, '25.00');
+        $customerId = $this->insertCustomer();
+        (new SaleService($this->connection))->record($productId, $customerId, $staffId, 2);
+
+        $history = (new SaleModel($this->connection))->history();
+
+        $this->assertCount(1, $history);
+        $this->assertSame('Test Product', $history[0]['product_name']);
+        $this->assertSame('Test Customer', $history[0]['customer_name']);
+        $this->assertSame('Test Cashier', $history[0]['staff_name']);
+        $this->assertSame(2, (int) $history[0]['quantity']);
+        $this->assertSame(50.0, (float) $history[0]['total_price']);
+    }
+
     private function insertStaff(): int
     {
         $this->connection->table('users')->insert([
@@ -87,6 +105,17 @@ final class SaleServiceTest extends CIUnitTestCase
             'name' => 'Test Product',
             'price' => $price,
             'stock_quantity' => $stock,
+            'created_at' => '2026-10-10 10:00:00',
+        ]);
+
+        return $this->connection->insertID();
+    }
+
+    private function insertCustomer(): int
+    {
+        $this->connection->table('customers')->insert([
+            'full_name' => 'Test Customer',
+            'email' => 'customer@example.com',
             'created_at' => '2026-10-10 10:00:00',
         ]);
 

@@ -16,6 +16,7 @@
             <?php if (session()->get('user_id') !== null): ?>
                 <a href="/products">Products</a>
                 <a href="/sales/new">Record Sale</a>
+                <a href="/sales">Sales History</a>
                 <a href="/customers">Customers</a>
                 <a href="/users">Users</a>
                 <form class="nav-form" method="post" action="/logout"><?= csrf_field() ?><button type="submit">Log Out</button></form>

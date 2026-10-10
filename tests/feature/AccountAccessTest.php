@@ -23,6 +23,11 @@ final class AccountAccessTest extends CIUnitTestCase
         $this->withSession([])->get('/sales/new')->assertRedirectTo('/login');
     }
 
+    public function testGuestIsRedirectedFromSalesHistory(): void
+    {
+        $this->withSession([])->get('/sales')->assertRedirectTo('/login');
+    }
+
     public function testGuestIsRedirectedFromUserForm(): void
     {
         $this->withSession([])->get('/users/new')->assertRedirectTo('/login');

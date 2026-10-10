@@ -21,6 +21,7 @@ $routes->group('products', ['filter' => 'auth'], static function ($routes) {
 });
 
 $routes->group('sales', ['filter' => 'auth'], static function ($routes) {
+    $routes->get('', 'Sales::index');
     $routes->get('new', 'Sales::new');
     $routes->post('', 'Sales::create');
 });

@@ -4,10 +4,16 @@ namespace App\Controllers;
 
 use App\Models\CustomerModel;
 use App\Models\ProductModel;
+use App\Models\SaleModel;
 use App\Services\SaleService;
 
 class Sales extends BaseController
 {
+    public function index()
+    {
+        return view('sales/index', ['sales' => (new SaleModel())->history()]);
+    }
+
     public function new()
     {
         return view('sales/form', $this->formData([
@@ -44,7 +50,7 @@ class Sales extends BaseController
             return redirect()->to('/sales/new')->withInput()->with('error', $result['message']);
         }
 
-        return redirect()->to('/sales/new')->with('success', $result['message']);
+        return redirect()->to('/sales')->with('success', $result['message']);
     }
 
     /** @param array<string, int|string> $sale */
