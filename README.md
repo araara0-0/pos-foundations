@@ -66,6 +66,16 @@ LumenMart POS Foundations is a CodeIgniter 4 application for managing customer a
 
 10. Open `http://localhost:8080/login` in a browser.
 
+### Optional sample products
+
+Populate the product catalog with editable convenience-store demo inventory:
+
+```bash
+php spark db:seed ProductSeeder
+```
+
+The seeder skips existing product names, so rerunning it will not duplicate or overwrite those products. Product prices are sample retail values and should be reviewed before real use.
+
 ## Project structure
 
 - `app/Config/Routes.php` defines public and protected routes.
