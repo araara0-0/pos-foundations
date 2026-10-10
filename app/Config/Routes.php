@@ -20,6 +20,11 @@ $routes->group('products', ['filter' => 'auth'], static function ($routes) {
     $routes->post('(:num)/delete', 'Products::delete/$1');
 });
 
+$routes->group('sales', ['filter' => 'auth'], static function ($routes) {
+    $routes->get('new', 'Sales::new');
+    $routes->post('', 'Sales::create');
+});
+
 $routes->group('customers', ['filter' => 'auth'], static function ($routes) {
     $routes->get('', 'Customers::index');
     $routes->get('new', 'Customers::new');
