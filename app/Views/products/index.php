@@ -1,4 +1,3 @@
-<?php /** @var array $products */ ?>
 <?= view('partials/header', ['title' => 'Products']) ?>
 
 <section class="page-heading">

@@ -1,6 +1,4 @@
 <?php
-/** @var array<string, mixed> $product */
-/** @var bool $isEdit */
 $errors = validation_list_errors();
 $heading = $isEdit ? 'Edit Product' : 'New Product';
 ?>

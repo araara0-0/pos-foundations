@@ -1,4 +1,3 @@
-<?php /** @var array $users */ ?>
 <?= view('partials/header', ['title' => 'User Accounts']) ?>
 
 <section class="page-heading">

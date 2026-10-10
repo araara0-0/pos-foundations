@@ -8,8 +8,6 @@ class ProductSeeder extends Seeder
 {
     public function run()
     {
-        // Representative Philippine convenience-store inventory.
-        // Prices are editable demo retail values, not a permanent price list.
         $products = [
             ['name' => 'C2 Green Tea Lemon 500ml', 'price' => '39.00', 'stock_quantity' => 48],
             ['name' => 'C2 Green Tea Apple 500ml', 'price' => '39.00', 'stock_quantity' => 48],

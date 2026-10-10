@@ -44,7 +44,5 @@ class CreateProductsAndSalesTables extends Migration
 
     public function down()
     {
-        // The SQL import may have supplied both tables before this migration ran.
-        // Keep their inventory and transaction history on rollback.
     }
 }

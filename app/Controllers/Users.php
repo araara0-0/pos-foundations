@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use CodeIgniter\HTTP\Files\UploadedFile;
 
 class Users extends BaseController
 {
@@ -186,10 +185,8 @@ class Users extends BaseController
         return true;
     }
 
-    /** @return string|null|false The stored filename, null when no upload was supplied, or false on validation failure. */
     private function prepareAvatar(): string|null|false
     {
-        /** @var UploadedFile|null $upload */
         $upload = $this->request->getFile('avatar');
         if ($upload === null || $upload->getError() === UPLOAD_ERR_NO_FILE) {
             return null;

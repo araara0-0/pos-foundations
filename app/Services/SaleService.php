@@ -13,7 +13,6 @@ class SaleService
         $this->db = $db ?? db_connect();
     }
 
-    /** @return array{success: bool, message: string} */
     public function record(int $productId, ?int $customerId, int $staffId, int $quantity): array
     {
         if ($quantity < 1) {
@@ -54,7 +53,6 @@ class SaleService
                 return $this->failure('Not enough stock is available for this sale.');
             }
 
-            // The stock update locks the row until commit; read its current price under that lock.
             $currentProduct = $this->db->table('products')->select('price')->where('id', $productId)->get()->getRowArray();
             if ($currentProduct === null) {
                 $this->db->transRollback();
@@ -92,7 +90,6 @@ class SaleService
         return intdiv($totalCents, 100) . '.' . str_pad((string) ($totalCents % 100), 2, '0', STR_PAD_LEFT);
     }
 
-    /** @return array{success: false, message: string} */
     private function failure(string $message): array
     {
         return ['success' => false, 'message' => $message];

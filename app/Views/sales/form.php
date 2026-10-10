@@ -1,7 +1,4 @@
 <?php
-/** @var array<string, mixed> $sale */
-/** @var array $products */
-/** @var array $customers */
 $errors = validation_list_errors();
 $selectedProduct = (string) old('product_id', $sale['product_id'] ?? '');
 $selectedCustomer = (string) old('customer_id', $sale['customer_id'] ?? '');

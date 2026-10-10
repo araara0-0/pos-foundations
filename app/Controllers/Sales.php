@@ -53,7 +53,6 @@ class Sales extends BaseController
         return redirect()->to('/sales')->with('success', $result['message']);
     }
 
-    /** @param array<string, int|string> $sale */
     private function formData(array $sale): array
     {
         return [

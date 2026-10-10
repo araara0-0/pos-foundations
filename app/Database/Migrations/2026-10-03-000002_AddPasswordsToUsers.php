@@ -16,7 +16,6 @@ class AddPasswordsToUsers extends Migration
 
         foreach ($this->db->table('users')->select('id, password')->get()->getResultArray() as $user) {
             if (! is_string($user['password']) || $user['password'] === '') {
-                // Existing accounts receive an unknown random password until an operator resets it.
                 $this->db->table('users')->where('id', $user['id'])->update([
                     'password' => password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT),
                 ]);
@@ -26,7 +25,5 @@ class AddPasswordsToUsers extends Migration
 
     public function down()
     {
-        // The SQL import may have supplied this column before the migration ran.
-        // Dropping it would remove every account's credentials.
     }
 }

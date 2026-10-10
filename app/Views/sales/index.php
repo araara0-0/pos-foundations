@@ -1,4 +1,3 @@
-<?php /** @var array $sales */ ?>
 <?= view('partials/header', ['title' => 'Sales History']) ?>
 
 <section class="page-heading">

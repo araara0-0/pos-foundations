@@ -22,7 +22,5 @@ class AddAvatarToUsers extends Migration
 
     public function down()
     {
-        // The SQL import may have supplied this column before the migration ran.
-        // There is no reliable way to tell who created it, so keep the data.
     }
 }

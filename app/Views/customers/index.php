@@ -1,4 +1,3 @@
-<?php /** @var array $customers */ ?>
 <?= view('partials/header', ['title' => 'Customer Accounts']) ?>
 
 <section class="page-heading">

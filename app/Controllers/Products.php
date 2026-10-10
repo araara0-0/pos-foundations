@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\ProductModel;
-use CodeIgniter\HTTP\Files\UploadedFile;
 
 class Products extends BaseController
 {
@@ -169,10 +168,8 @@ class Products extends BaseController
         ]);
     }
 
-    /** @return string|null|false The filename, null when no image was supplied, or false on failure. */
     private function prepareImage(): string|null|false
     {
-        /** @var UploadedFile|null $upload */
         $upload = $this->request->getFile('image');
         if ($upload === null || $upload->getError() === UPLOAD_ERR_NO_FILE) {
             return null;

@@ -1,4 +1,3 @@
-<?php /** @var string $title */ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
