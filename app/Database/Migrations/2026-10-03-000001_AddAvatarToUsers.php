@@ -22,6 +22,7 @@ class AddAvatarToUsers extends Migration
 
     public function down()
     {
-        $this->forge->dropColumn('users', 'avatar');
+        // The SQL import may have supplied this column before the migration ran.
+        // There is no reliable way to tell who created it, so keep the data.
     }
 }

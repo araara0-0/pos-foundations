@@ -44,7 +44,7 @@ class CreateProductsAndSalesTables extends Migration
 
     public function down()
     {
-        $this->forge->dropTable('sales', true);
-        $this->forge->dropTable('products', true);
+        // The SQL import may have supplied both tables before this migration ran.
+        // Keep their inventory and transaction history on rollback.
     }
 }

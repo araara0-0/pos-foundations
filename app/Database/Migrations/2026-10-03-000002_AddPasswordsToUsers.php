@@ -26,6 +26,7 @@ class AddPasswordsToUsers extends Migration
 
     public function down()
     {
-        $this->forge->dropColumn('users', 'password');
+        // The SQL import may have supplied this column before the migration ran.
+        // Dropping it would remove every account's credentials.
     }
 }
