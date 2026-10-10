@@ -6,7 +6,7 @@ LumenMart POS Foundations is a CodeIgniter 4 application for managing customer a
 
 - Landing page at `/`
 - Project information at `/about`
-- Customer account listing at `/customers`
+- Full customer management at `/customers`
 - User and staff account listing at `/users`
 - Product listing and management at `/products`
 - Customer and user records retrieved from a MySQL database

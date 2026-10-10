@@ -26,6 +26,7 @@ $routes->group('customers', ['filter' => 'auth'], static function ($routes) {
     $routes->post('', 'Customers::create');
     $routes->get('(:num)/edit', 'Customers::edit/$1');
     $routes->post('(:num)', 'Customers::update/$1');
+    $routes->post('(:num)/delete', 'Customers::delete/$1');
 });
 
 $routes->group('users', ['filter' => 'auth'], static function ($routes) {

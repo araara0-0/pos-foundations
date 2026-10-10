@@ -19,12 +19,23 @@
             </tr>
         </thead>
         <tbody>
+            <?php if ($customers === []): ?>
+                <tr><td colspan="4">No customers have been added yet.</td></tr>
+            <?php endif; ?>
             <?php foreach ($customers as $customer): ?>
                 <tr>
                     <td><?= esc($customer['full_name']) ?></td>
                     <td><?= esc($customer['email']) ?></td>
                     <td><?= esc($customer['phone']) ?></td>
-                    <td><a href="/customers/<?= esc($customer['id']) ?>/edit">Edit</a></td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="/customers/<?= esc($customer['id']) ?>/edit">Edit</a>
+                            <form method="post" action="/customers/<?= esc($customer['id']) ?>/delete" onsubmit="return confirm('Delete this customer?')">
+                                <?= csrf_field() ?>
+                                <button class="link-button danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

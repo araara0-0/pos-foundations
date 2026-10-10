@@ -74,6 +74,17 @@ class Customers extends BaseController
         return redirect()->to('/customers')->with('success', 'Customer account updated.');
     }
 
+    public function delete(int $id)
+    {
+        $model = new CustomerModel();
+        if ($model->find($id) === null) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+        }
+
+        $model->delete($id);
+        return redirect()->to('/customers')->with('success', 'Customer account deleted.');
+    }
+
     private function customerData(): array
     {
         return [
