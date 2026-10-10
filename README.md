@@ -19,7 +19,7 @@ LumenMart POS is a CodeIgniter 4 application for managing a small store's produc
 
 - PHP 8.2 or newer
 - Composer 2
-- PHP extensions `intl`, `mbstring`, `zip`, and `gd`; enable `sqlite3` to run the automated database tests
+- PHP extensions `intl`, `mbstring`, `zip`, and `gd`
 - MySQL or MariaDB
 - XAMPP or another compatible local server environment
 
@@ -79,16 +79,6 @@ php spark db:seed ProductSeeder
 ```
 
 The seeder skips existing product names, so rerunning it will not duplicate or overwrite those products. Product prices are sample retail values and should be reviewed before real use.
-
-## Tests
-
-The test database is an in-memory SQLite database; running PHPUnit does not change the local MySQL data. From the project root, run:
-
-```powershell
-C:\xampp\php\php.exe -d extension=sqlite3 -d extension=gd vendor\bin\phpunit
-```
-
-This command enables the SQLite3 and GD extensions for that run if they are installed but disabled in XAMPP's CLI configuration. See [tests/README.md](tests/README.md) for test coverage and other environments.
 
 ## Project structure
 
